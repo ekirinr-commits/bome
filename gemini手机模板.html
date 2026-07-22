@@ -2657,7 +2657,7 @@ Keep puzzle under 100 characters, answer under 200 characters. Be creative!`;
         "Authorization": "Bearer " + claudeApiKey
       },
       body: safeStringify({
-        model: "gemini-2.5-flash", max_tokens: 4096, ...getWebSearchTool(), messages: [{ role: "user", content: puzzlePrompt }]
+        model: "gemini-2.0-flash", max_tokens: 4096, ...getWebSearchTool(), messages: [{ role: "user", content: puzzlePrompt }]
       })
     });
 
@@ -3242,7 +3242,7 @@ async function startChat() {
     const savedWebSearch = localStorage.getItem("vbc_websearch");
     webSearchEnabled = savedWebSearch === "1"; // default off
     const savedModel = localStorage.getItem("vbc_model");
-    if (savedModel && (savedModel === "gemini-2.5-pro" || savedModel === "gemini-2.5-flash")) chatModel = savedModel;
+    if (savedModel && (savedModel === "gemini-2.5-pro" || savedModel === "gemini-2.0-flash")) chatModel = savedModel;
   }
   const pBtn = document.getElementById("proactiveBtn");
   pBtn.textContent = proactiveEnabled ? "💬 主动消息:开" : "💬 主动消息:关";
@@ -3424,7 +3424,7 @@ const ImprintMemory = {
           "Authorization": "Bearer " + claudeApiKey
         },
         body: safeStringify({
-          model: "gemini-2.5-flash", max_tokens: 4096, ...getWebSearchTool(), messages: [{ role: "system", content: `你是记忆摘要助手。把对话片段压缩成一段简洁摘要（中文，50-100字）+关键词列表。]
+          model: "gemini-2.0-flash", max_tokens: 4096, ...getWebSearchTool(), messages: [{ role: "system", content: `你是记忆摘要助手。把对话片段压缩成一段简洁摘要（中文，50-100字）+关键词列表。]
 回复严格JSON格式，不要其他内容：
 {"summary":"摘要内容","keywords":["关键词1","关键词2"],"category":"facts|events|insights","importance":0.5}
 importance 范围 0-1，越重要越高。涉及个人偏好/生日/重要事件给0.8+，普通闲聊给0.3-0.5。` }, { role: "user", content: transcript }]
@@ -4611,7 +4611,7 @@ async function sendMessage() {
       let claudeRes;
       if (fileData.isDoc && fileData.isPdf && fileData.base64) {
         // PDF → Gemini native generateContent endpoint with inline_data (真正解析PDF内容)
-        const nativeModel = (chatModel && chatModel.startsWith("gemini")) ? chatModel : "gemini-2.5-flash";
+        const nativeModel = (chatModel && chatModel.startsWith("gemini")) ? chatModel : "gemini-2.0-flash";
         const priorContents = conversationHistory.slice(-15, -1)
           .filter(m => m.content && (typeof m.content === "string") && m.content.trim())
           .map(m => ({ role: m.role === "assistant" ? "model" : "user", parts: [{ text: m.content }] }));
@@ -6222,7 +6222,7 @@ let peekEnabled = false;
 let chatModel = "gemini-2.5-pro";
 function toggleModel() {
   if (chatModel === "gemini-2.5-pro") {
-    chatModel = "gemini-2.5-flash";
+    chatModel = "gemini-2.0-flash";
   } else {
     chatModel = "gemini-2.5-pro";
   }
@@ -6261,7 +6261,7 @@ async function webSearchQuery(query) {
   if (googleApiKey) {
     try {
       const res = await fetch(
-        `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${googleApiKey}`,
+        `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${googleApiKey}`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -6585,7 +6585,7 @@ async function retroImportHistory() {
           "Authorization": "Bearer " + claudeApiKey
         },
         body: safeStringify({
-          model: "gemini-2.5-flash", max_tokens: 4096, ...getWebSearchTool(), messages: [{ role: "system", content: `你是记忆摘要助手。把对话片段压缩成一段简洁摘要（中文，50-100字）+关键词列表。]
+          model: "gemini-2.0-flash", max_tokens: 4096, ...getWebSearchTool(), messages: [{ role: "system", content: `你是记忆摘要助手。把对话片段压缩成一段简洁摘要（中文，50-100字）+关键词列表。]
 回复严格JSON格式，不要其他内容：
 {"summary":"摘要内容","keywords":["关键词1","关键词2"],"category":"facts|events|insights","importance":0.5}
 importance 范围 0-1，越重要越高。涉及个人偏好/生日/重要事件给0.8+，普通闲聊给0.3-0.5。` }, { role: "user", content: transcript }]
@@ -8145,7 +8145,7 @@ ${transcript}
   const res = await fetch("https://generativelanguage.googleapis.com/v1beta/openai/chat/completions", {
     method: "POST",
     headers: { "Content-Type": "application/json", "Authorization": "Bearer " + claudeApiKey },
-    body: safeStringify({ model: "gemini-2.5-flash", max_tokens: 16384, ...getWebSearchTool(), messages: [{ role: "user", content: prompt }] })
+    body: safeStringify({ model: "gemini-2.0-flash", max_tokens: 16384, ...getWebSearchTool(), messages: [{ role: "user", content: prompt }] })
   });
   if (!res.ok) throw new Error("API错误 " + res.status);
   const data = await res.json();
